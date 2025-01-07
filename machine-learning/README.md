@@ -13,6 +13,21 @@ To add or remove dependencies, you can use the commands `poetry add $PACKAGE_NAM
 Be sure to commit the `poetry.lock` and `pyproject.toml` files with `poetry lock --no-update` to reflect any changes in dependencies.
 
 
+# API
+```shell
+curl -X POST "http://localhost:3003/predict" \
+    -F 'entries={"<ModelTask>":{"<ModelType>":{"modelName":"<model>", "otherParam":"..."}}}' \
+    -F image=@the/img/path
+```
+
+# Auto-rotate
+To predict:
+```shell
+curl -X POST "http://localhost:3003/predict" \
+    -F 'entries={"angle-prediction":{"angle-prediction":{"modelName":"deep-image-orientation-angle-detection"}}}' \
+    -F image=@the/img/path
+```
+
 # Load Testing
 
 To measure inference throughput and latency, you can use [Locust](https://locust.io/) using the provided `locustfile.py`.

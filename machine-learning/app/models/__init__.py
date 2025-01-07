@@ -1,10 +1,11 @@
 from typing import Any
 
-from app.models.base import InferenceModel
-from app.models.clip.textual import MClipTextualEncoder, OpenClipTextualEncoder
-from app.models.clip.visual import OpenClipVisualEncoder
 from app.schemas import ModelSource, ModelTask, ModelType
 
+from .base import InferenceModel
+from .clip.textual import MClipTextualEncoder, OpenClipTextualEncoder
+from .clip.visual import OpenClipVisualEncoder
+from .rotation.detection import AngleDetector
 from .constants import get_model_source
 from .facial_recognition.detection import FaceDetector
 from .facial_recognition.recognition import FaceRecognizer
@@ -27,6 +28,9 @@ def get_model_class(model_name: str, model_type: ModelType, model_task: ModelTas
 
         case ModelSource.INSIGHTFACE, ModelType.RECOGNITION, ModelTask.FACIAL_RECOGNITION:
             return FaceRecognizer
+
+        case ModelSource.CHUCKAME, ModelType.ANGLE_PREDICTION, ModelTask.ANGLE_PREDICTION:
+            return AngleDetector
 
         case _:
             raise ValueError(f"Unknown model combination: {source}, {model_type}, {model_task}")

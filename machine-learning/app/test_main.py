@@ -22,6 +22,7 @@ from app.models.clip.textual import MClipTextualEncoder, OpenClipTextualEncoder
 from app.models.clip.visual import OpenClipVisualEncoder
 from app.models.facial_recognition.detection import FaceDetector
 from app.models.facial_recognition.recognition import FaceRecognizer
+from app.models.rotation.detection import AngleDetector
 from app.sessions.ann import AnnSession
 from app.sessions.ort import OrtSession
 
@@ -325,6 +326,27 @@ class TestAnnSession:
         ann_session.return_value.execute.assert_called_once_with(123, [input1, input2])
         np_spy.call_count == 2
         np_spy.assert_has_calls([mock.call(input1), mock.call(input2)])
+
+
+class TestAngleDetection:
+    cache_dir = Path("test_cache")
+
+    def test_basic_image(
+        self,
+        pil_image: Image.Image,
+        mocker: MockerFixture,
+    ) -> None:
+        mocker.patch.object(AngleDetector, "download")
+
+        mocked = mocker.patch.object(InferenceModel, "_make_session", autospec=True).return_value
+        mocked.run.return_value = [[self.embedding]]
+
+        clip_encoder = AngleDetector(cache_dir="test_cache")
+        embedding = clip_encoder.predict(pil_image)
+
+        assert isinstance(embedding, np.ndarray)
+        assert embedding.dtype == np.float32
+        mocked.run.assert_called_once()
 
 
 class TestCLIP:
